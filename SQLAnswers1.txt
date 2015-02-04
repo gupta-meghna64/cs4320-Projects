@@ -1,0 +1,1 @@
+SELECT DISTINCT(storeid) FROM Sells LEFT OUTER JOIN Item USING(iid) GROUP BY storeid HAVING COUNT(distinct color) = 3;
