@@ -1,0 +1,9 @@
+# Build 
+*_build
+*inline_tests.log
+# latex ignores
+*.aux
+*.log
+*.synctex.gz
+# OS X
+.DS_Store
