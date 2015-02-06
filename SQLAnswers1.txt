@@ -1,3 +1,5 @@
 SELECT DISTINCT(storeid) FROM Sells LEFT OUTER JOIN Item USING(iid) GROUP BY storeid HAVING COUNT(distinct color) = 3;
 
 SELECT storeid, count FROM (SELECT storeid, count FROM (SELECT S1.storeid, count(*) AS count FROM Store S1, Sells E1 WHERE E1.storeid = S1.storeid GROUP BY S1.storeid) AS temp WHERE temp.count < (Select max(count) FROM (select S2.storeid, count(*) AS count FROM Store S2, Sells E2 WHERE E2.storeid = S2.storeid GROUP BY S2.storeid) AS temp2)) AS temp3 HAVING count = (SELECT max(count) FROM (SELECT storeid, count FROM (SELECT S3.storeid, count(*) AS count FROM Store S3, Sells E3 WHERE E3.storeid = S3.storeid GROUP BY S3.storeid) as temp4 WHERE temp4.count < (SELECT max(count) FROM (SELECT S4.storeid, count(*) AS count FROM Store S4, Sells E4 WHERE E4.storeid = S4.storeid GROUP BY S4.storeid) as temp5)) as temp6)
+
+SELECT S.iid, S.storeid, S.price FROM sells S, (SELECT E.iid AS itemid, min(price) AS minprice FROM sells E group by iid) AS temp WHERE S.iid = temp.itemid AND S.price = temp.minprice;
