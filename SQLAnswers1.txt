@@ -1,6 +1,9 @@
 1.a
 SELECT DISTINCT(storeid) FROM Sells LEFT OUTER JOIN Item USING(iid) GROUP BY storeid HAVING COUNT(distinct color) = 3;
 
+1.b
+SELECT store1id, store2id FROM (SELECT DISTINCT S1.storeid AS store1id, S2.storeid AS store2id FROM sells S1, sells S2 WHERE S1.storeid NOT IN (SELECT DISTINCT storeid FROM sells WHERE iid IN (SELECT iid FROM sells WHERE storeid = S2.storeid))) AS temp WHERE store1id > store2id;
+
 1.c
 SELECT S.iid, S.storeid, S.price FROM sells S, (SELECT E.iid AS itemid, min(price) AS minprice FROM sells E group by iid) AS temp WHERE S.iid = temp.itemid AND S.price = temp.minprice;
 
