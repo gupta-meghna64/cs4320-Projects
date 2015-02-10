@@ -27,6 +27,57 @@ See txt file
 See txt file
 
 \item
+$\rho(temp, (Sells \bowtie_{Sells.iid=Item.iid} Item) \bowtie_{storeid} (Sells \bowtie_{Sells.iid=Item.iid} Item) )$
+\newline
+$\rho(temp1, temp \bowtie_{storeid} temp)$
+\newline
+$\rho(tempf(2 \rightarrow iid1, 4 \rightarrow color1, 5 \rightarrow iid2, 7 \rightarrow color2, 8 \rightarrow iid3, 10 \rightarrow color3, 11 \rightarrow iid4, 13 \rightarrow color4),  temp1)$
+\newline
+$\rho(check1, \sigma_{color1 \neq color2 \neq color3 \neq color4} tempf)$
+\newline
+$\rho(check2, \sigma_{color1 \neq color2 \neq color3 } (\pi_{storeid,color1, color2,color3} tempf))$
+\newline
+$\rho(ans, \pi_{storeid} (check2) - \pi_{storeid} (check1) )$
+\newline
+Table ans is our final result
+
+\item
+Sells S1 and Sells S2
+\newline
+$\rho(temp1, \pi_{iid} (\sigma_{storeid=S2.storeid} Sells))$
+\newline
+$\rho(temp2, \pi_{storeid} (\sigma_{iid=temp1.storeid} Sells))$
+\newline
+$\rho(temp3, \pi_{S1.storeid, S2.storeid} (\sigma_{S1.storeid \neq temp2.storeid} (S1 \times S2)))$
+\newline
+$\rho(temp4(1 \rightarrow storeid1, 2 \rightarrow storeid2), temp3)$
+\newline
+$\rho(ans, \pi_{storeid1, storeid2} (\sigma_{storeid1>storeid2} temp4))$
+\newline
+Table ans is our final result
+
+\item
+$\rho(sells2, sells)$
+\newline
+$\rho(cross, sells2 \times sells)$
+\newline
+$\rho(cross2(1 \rightarrow iid1, 2 \rightarrow storeid1, 3 \rightarrow price1, 4 \rightarrow iid2, 5 \rightarrow storeid2, 6 \rightarrow price2), cross)$
+\newline
+$\rho(notmin1, \sigma_{price2>price1 \wedge iid2=iid1 \wedge storeid2 \neq storeid1} cross2 )$
+\newline
+$\rho(notmin2, \pi_{iid2, storeid2, price2} notmin1)$
+\newline
+$\rho(ans, Sells-notmin2)$
+\newline
+Table ans is our final result
+\end{enumerate}
+
+\item
+see txt file
+
+\item
+\begin{enumerate}
+\item
 
 \end{enumerate}
 
