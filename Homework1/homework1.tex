@@ -78,6 +78,171 @@ see txt file
 \item
 \begin{enumerate}
 \item
+True
+\newline
+$\delta(\sigma_C (R))\equiv \sigma_C(\delta (R))$
+\newline
+LHS
+\newline
+$\delta(\sigma_C (R))\equiv \{t \in R \mid$ c is true for t  $\}$
+\newline
+$\sigma_C (R)\equiv \{kt \in R \mid$ k is the multiplicity of t and c is true for t $\}$
+\newline
+$R \equiv \{kt \in R \mid$ k is the multiplicity for t $\}$
+\newline
+RHS:
+\newline
+$\sigma_C(\delta (R)) \equiv \{ t \in R \mid$ where c is true for t $\}$
+\newline
+$\delta (R) \equiv \{ kt \in R \mid$ k is the multiplicity for t $\}$
+\newline
+$R \equiv \{ kt \in R \mid$ k is the multiplicity for t $\}$
+\newline
+$LHS \equiv RHS$
+
+\item
+True
+\newline
+$\delta (\pi_A (R)) \equiv \pi_A (\delta(R)) $
+\newline
+LHS:
+\newline
+$\delta (\pi_A (R)) \equiv \{ t[A] \mid t \in R \}$
+\newline
+$\pi_A (R) \equiv \{ kt[A] \mid kt \in R \mid $ k is the multiplicity of t $\}$
+\newline
+$R \equiv \{ kt \in R \mid $ k is the multiplicity of t$\}$
+\newline
+RHS:
+\newline
+$\pi_A (\delta(R)) \equiv \{ t[A] \mid t \in R\}$
+\newline
+$\\delta(R) \equiv \{  t \in R \}$
+\newline
+$R \equiv \{ kt \in R \mid $ k is the multiplicity of t$\}$
+\newline
+$LHS \equiv RHS$
+
+\item
+True
+\newline
+$\delta(R \times S) \equiv \delta(R) \times \delta(S)$
+\newline
+LHS:
+\newline
+$\delta(R \times S) \equiv \{ r \cdot s \mid r \in R \wedge s \in S\}$
+\newline
+$R \times S  \equiv \{k(r \cdot s) \mid r \in R \wedge s \in S \wedge $ k is the multiplicity of $(r \cdot s) \}$
+\newline 
+RHS:
+\newline
+$\delta(R) \times \delta(S) \equiv  \{ r \cdot s \mid r \in R \wedge s \in S\}$ 
+\newline
+$R \times \delta(S) \equiv \{ m(r) \cdot s \mid r \in R \wedge s \in S \wedge $ m is the multiplicity of r$\}$
+\newline
+$R \times S \equiv \{ m(r) \cdot n(s) \mid r \in R \wedge s \in S \wedge $ m is the multiplicity of r  and n is the multiplicity of s$\}$
+\newline
+$R \times S  \equiv \{k(r \cdot s) \mid r \in R \wedge s \in S \wedge $ k=mn is the multiplicity of $(r \cdot s) \}$
+\newline
+$LHS \equiv RHS$
+
+\item
+True
+\newline
+$\delta(R \bowtie_C S) \equiv \delta(R) \bowtie_C \delta(S)$
+\newline
+LHS:
+\newline
+$\delta(R \bowtie_C S) \equiv \delta( \sigma_C (R \times S))$
+\newline
+$\delta( \sigma_C (R \times S)) \equiv \{ r \cdot s \mid r \in R \wedge s \in S \wedge $ c is true for $r \cdot s\}$
+\newline
+$ \sigma_C (R \times S) \equiv \{ k(r \cdot s) \mid r \in R \wedge s \in S \wedge $ c is true for $r \cdot s \wedge $ k is the multiplictity of $ r\cdot s\}$
+\newline
+$R \times S  \equiv \{k(r \cdot s) \mid r \in R \wedge s \in S \wedge $ k=mn is the multiplicity of $(r \cdot s) \}$
+\newline
+RHS:
+\newline
+$\delta(R) \bowtie_C \delta(S) \equiv \{ r \cdot s \mid r \in R \wedge s \in S \wedge $ c is true for $r \cdot s\}$
+\newline
+$R  \bowtie_C \delta(S) \equiv \{ m(r) \cdot s \mid r \in R \wedge s \in S \wedge $ c is true for $m(r) \cdot s \wedge$ m is the multiplicity of r$\}$
+\newline
+$R  \bowtie_C S \equiv \{ m(r) \cdot n(s) \mid r \in R \wedge s \in S \wedge $ c is true for $m(r) \cdot s \wedge$ m is the multiplicity of r  and n is the multiplicity of s$\}$
+\newline
+$R  \bowtie_C S \equiv \{k(r \cdot s) \mid r \in R \wedge s \in S \wedge $c is true for $ k(r \cdot s) \wedge$ k=mn is the multiplicity of $(r \cdot s) \}$
+\newline
+$R  \bowtie_C S  \equiv \sigma_C (R \times S)$
+\newline
+$\sigma_C (R \times S) \equiv \{k(r \cdot s) \mid r \in R \wedge s \in S \wedge $c is true for $ k(r \cdot s) \wedge$ k=mn is the multiplicity of $(r \cdot s) \}$
+\newline
+$R \times S  \equiv \{k(r \cdot s) \mid r \in R \wedge s \in S \wedge $ k=mn is the multiplicity of $(r \cdot s) \}$
+\newline
+$LHS \equiv RHS$
+
+\item
+False
+\newline
+$\delta(R \cup_B S) \neq \delta(R) \cup_B \delta(S)$
+\newline
+$R=\{ (1,2), (1,2), (3,4)\}$ and $S=\{ (1,2), (3,4), (3,4) \}$
+\newline
+LHS:
+\newline
+$R \cup_B S= \{ 1,2), (1,2), (1,2), (3,4), (3,4), (3,4) \}$
+\newline
+$\delta(R \cup_B S) = \{ (1,2), (3,4) \}$
+\newline
+RHS:
+\newline
+$\delta(R)=\{ (1,2), (3,4) \}$ and $\delta(S)=\{ (1,2), (3,4) \}$
+\newline
+$\delta(R) \cup_B \delta(S)= \{(1,2),(1,2),(3,4),(3,4) \}$
+\newline
+$LHS \neq RHS$ so this is false
+
+\item
+True
+\newline
+LHS:
+\newline
+$\delta(R \cap_B S) \equiv \delta(R) \cap_B \delta(S)$
+\newline
+$\delta(R \cap_B S) \equiv \{ t \in R \vee t \in S \mid$ t occurs in both R and S$\}$
+\newline
+$R \cap_B S \equiv \{ kt \in R \vee t \in S \mid $t occurs in both R and S and k is the minimum number of occurrences of t in either R or S$\} $
+\newline
+RHS:
+\newline
+$\delta(R) \cap_B \delta(S) \equiv  \{ t \in R \vee t \in S \mid$ t occurs in both R and S$\}$
+\newline
+$R \cap_B \delta(S) \equiv \{ mt \in R \vee t \in S \mid $t occurs in both R and S and m is the amount of occurrense of t in R$\}$
+\newline
+$R \cap_B S \equiv \{ mt \in R \vee nt \in S \mid $ t occurs in both R and S and m is the amount of occurrense of t in R and n is the n amount of occurences of t in S$\}$
+\newline
+$R \cap_B S \equiv \{ kt \in R \vee t \in S \mid $t occurs in both R and S and k is the minimum number of occurrences of t in either R or S$\} $
+\newline
+$LHS \equiv RHS$
+
+\item
+False
+\newline
+$\delta(R-_B S ) \equiv \delta(R) -_B \delta(S)$
+\newline
+$R=\{ (1,2), (1,2), (3,4)\}$ and $S=\{ (1,2), (3,4), (3,4) \}$
+\newline
+LHS:
+\newline
+$R -_BS = \{ (1,2) \}$
+\newline
+$\delta(R -_B S)= \{ (1,2) \}$
+\newline
+RHS:
+\newline
+$\delta(R)=\{ (1,2), (3,4) \}$ and $\delta(S)=\{ (1,2), (3,4) \}$
+\newline
+$ \delta(R) -_B \delta(S)=\{ \}$ empty set
+\newline
+$LHS \neq RHS$
 
 \end{enumerate}
 

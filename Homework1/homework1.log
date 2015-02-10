@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.10.13)  10 FEB 2015 02:11
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.10.13)  10 FEB 2015 14:16
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -251,28 +251,30 @@ LaTeX Font Info:    Try loading font information for U+lasy on input line 12.
 File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
 ) [1
 
-{/usr/local/texlive/2014basic/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+{/usr/local/texlive/2014basic/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2
+] [3]
 (./homework1.aux) ) 
 Here is how much of TeX's memory you used:
- 2595 strings out of 494522
- 33738 string characters out of 6167204
- 98727 words of memory out of 5000000
- 5842 multiletter control sequences out of 15000+600000
- 5955 words of font info for 26 fonts, out of 8000000 for 9000
+ 2597 strings out of 494522
+ 33755 string characters out of 6167204
+ 103727 words of memory out of 5000000
+ 5843 multiletter control sequences out of 15000+600000
+ 6254 words of font info for 27 fonts, out of 8000000 for 9000
  319 hyphenation exceptions out of 8191
- 31i,11n,45p,260b,298s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 31i,12n,45p,260b,455s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2014basic/texmf-dist/fonts/type1/public/
 amsfonts/cm/cmmi10.pfb></usr/local/texlive/2014basic/texmf-dist/fonts/type1/pub
 lic/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2014basic/texmf-dist/fonts/type1/
 public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2014basic/texmf-dist/fonts/typ
 e1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2014basic/texmf-dist/fonts/
 type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2014basic/texmf-dist/font
-s/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2014basic/texmf-dist/
-fonts/type1/public/amsfonts/cm/cmsy7.pfb>
-Output written on homework1.pdf (1 page, 77254 bytes).
+s/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texlive/2014basic/texmf-dist/fo
+nts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2014basic/texmf-dis
+t/fonts/type1/public/amsfonts/cm/cmsy7.pfb>
+Output written on homework1.pdf (3 pages, 103339 bytes).
 PDF statistics:
- 36 PDF objects out of 1000 (max. 8388607)
- 25 compressed objects within 1 object stream
+ 46 PDF objects out of 1000 (max. 8388607)
+ 32 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
