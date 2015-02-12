@@ -16,7 +16,7 @@ CREATE TABLE BoatRes (resnum INTEGER PRIMARY KEY,
                       bid INTEGER, 
                       startdate DATE NOT NULL, 
                       enddate DATE NOT NULL
-		       CHECK (NOT EXISTS SELECT * FROM BoatRes b1, BoatRes b2 WHERE 
+		      CHECK (NOT EXISTS SELECT * FROM BoatRes b1, BoatRes b2 WHERE 
 				b1.resnum!=b2.resnum AND b1.bid=b2.bid AND 
 				b1.enddate>b2.startdate AND b1.startdate<b2.enddate));
 
