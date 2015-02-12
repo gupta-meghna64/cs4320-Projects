@@ -24,13 +24,15 @@ CREATE TABLE BoatRes (resnum INTEGER PRIMARY KEY,
 CREATE OR REPLACE FUNCTION no_overlap() RETURNS trigger AS $no_overlap$
 	BEGIN
 	-- Check that new start date does not overlap with an existing reservation
-	IF EXISTS (Select enddate from (select * from BoatRes where bid = NEW.bid) as temp1 WHERE NEW.startdate <= temp1.enddate) AND EXISTS (Select startdate from (select * from BoatRes where bid = NEW.bid) as temp2 WHERE temp2.startdate <= NEW.startdate)
+	IF EXISTS (SELECT * FROM (Select resnum r1 from (select * from BoatRes where bid = NEW.bid) as temp1 WHERE NEW.startdate <= temp1.enddate) as t1 INNER JOIN (Select resnum r2 from (select * from BoatRes where bid = NEW.bid) as temp2 WHERE temp2.startdate <= NEW.startdate) as t2 ON t1.r1 = t2.r2)
 	THEN RAISE EXCEPTION 'startdate overlaps';
 	END IF;
-	IF EXISTS (Select startdate from (select * from BoatRes where bid = NEW.bid) as temp1 WHERE NEW.enddate >= temp1.startdate) AND EXISTS (Select enddate from (select * from BoatRes where bid = NEW.bid) as temp2 WHERE temp2.enddate >= NEW.enddate)
+	IF EXISTS (SELECT * FROM (Select resnum r1 from (select * from BoatRes where bid = NEW.bid) as temp1 WHERE NEW.enddate >= temp1.startdate) as t1 INNER JOIN (Select resnum r2 from (select * from BoatRes where bid = NEW.bid) as temp2 WHERE temp2.enddate >= NEW.enddate) as t2 on t1.r1 = t2.r2)
 	THEN RAISE EXCEPTION 'enddate overlaps';
 	END IF;
-****NEED CASE WHERE NEW RESERVATION COMPLETELY BOUNDS AN EXISTING ONE
+	IF EXISTS (SELECT * FROM (Select resnum r1 from (select * from BoatRes where bid = NEW.bid) as temp1 WHERE NEW.startdate <= temp1.startdate) as t1 INNER JOIN (Select resnum r2 from (select * from BoatRes where bid = NEW.bid) as temp2 WHERE temp2.enddate <= NEW.enddate) as t2 on t1.r1 = t2.r2)
+	THEN RAISE EXCEPTION 'new reservation bounds existing reservation';
+	END IF;
 	RETURN NEW;
 	END
 	$no_overlap$ LANGUAGE plpgsql;
