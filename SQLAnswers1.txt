@@ -9,3 +9,32 @@ SELECT S.iid, S.storeid, S.price FROM sells S, (SELECT E.iid AS itemid, min(pric
 
 1.d 
 SELECT storeid FROM (SELECT storeid, count FROM (SELECT storeid, count FROM (SELECT S1.storeid, count(*) AS count FROM Store S1, Sells E1 WHERE E1.storeid = S1.storeid GROUP BY S1.storeid) AS temp WHERE temp.count < (Select max(count) FROM (select S2.storeid, count(*) AS count FROM Store S2, Sells E2 WHERE E2.storeid = S2.storeid GROUP BY S2.storeid) AS temp2)) AS temp3 HAVING count = (SELECT max(count) FROM (SELECT storeid, count FROM (SELECT S3.storeid, count(*) AS count FROM Store S3, Sells E3 WHERE E3.storeid = S3.storeid GROUP BY S3.storeid) as temp4 WHERE temp4.count < (SELECT max(count) FROM (SELECT S4.storeid, count(*) AS count FROM Store S4, Sells E4 WHERE E4.storeid = S4.storeid GROUP BY S4.storeid) as temp5)) as temp6)) AS temp7;
+
+2.a
+CREATE TABLE BoatRes (resnum INTEGER PRIMARY KEY, 
+                      sid INTEGER,
+                      bid INTEGER, 
+                      startdate DATE NOT NULL, 
+                      enddate DATE NOT NULL
+		       CHECK (NOT EXISTS SELECT * FROM BoatRes b1, BoatRes b2 WHERE 
+				b1.resnum!=b2.resnum AND b1.bid=b2.bid AND 
+				b1.enddate>b2.startdate AND b1.startdate<b2.enddate));
+
+2.b
+CREATE OR REPLACE FUNCTION no_overlap() RETURNS trigger AS $no_overlap$
+	BEGIN
+	-- Check that new start date does not overlap with an existing reservation
+	IF EXISTS (Select enddate from (select * from BoatRes where bid = NEW.bid) as temp1 WHERE NEW.startdate <= temp1.enddate) AND EXISTS (Select startdate from (select * from BoatRes where bid = NEW.bid) as temp2 WHERE temp2.startdate <= NEW.startdate)
+	THEN RAISE EXCEPTION 'startdate overlaps';
+	END IF;
+	IF EXISTS (Select startdate from (select * from BoatRes where bid = NEW.bid) as temp1 WHERE NEW.enddate >= temp1.startdate) AND EXISTS (Select enddate from (select * from BoatRes where bid = NEW.bid) as temp2 WHERE temp2.enddate >= NEW.enddate)
+	THEN RAISE EXCEPTION 'enddate overlaps';
+	END IF;
+****NEED CASE WHERE NEW RESERVATION COMPLETELY BOUNDS AN EXISTING ONE
+	RETURN NEW;
+	END
+	$no_overlap$ LANGUAGE plpgsql;
+
+CREATE TRIGGER no_overlap BEFORE INSERT OR UPDATE ON
+	BoatREs
+	FOR EACH ROW EXECUTE PROCEDURE no_overlap();
