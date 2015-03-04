@@ -78,87 +78,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	 * @param node
 	 */
 	public Entry<K, Node<K,T>> insertHelp(K key, T value, Node<K,T> node, Entry<K, Node<K,T>> enter){
-		/* //node is not a leaf
-		if(node.isLeafNode==false){
-			IndexNode index= (IndexNode) node;
-			//checks to see if branch to take is first child
-			if(key.compareTo((K) index.keys.get(0))<0){
-				Node<K, T> child = (Node) index.children.get(0);
-				if(child.isLeafNode){
-					LeafNode leaf = (LeafNode) child;
-					Entry<K, Node<K, T>> split= insertLeaf(key, value, leaf);
-					if(split!=null){
-						index.insertSorted(split, 0);
-						if(index.isOverflowed()){
-							return splitIndexNode(index);
-						}
-						else{
-							return null;
-						}
-					}
-				}
-				else{
-					searchHelp(key, (Node) index.children.get(0));
-				}
-				
-			}
-			//checks to see if branch to take is last child
-			else if(key.compareTo((K) index.keys.get( index.keys.size() -1 )) >=0){
-				Node<K, T> child = (Node) index.children.get(index.keys.size() -1);
-				if(child.isLeafNode){
-					LeafNode leaf = (LeafNode) child;
-					Entry<K, Node<K, T>> split= insertLeaf(key, value, leaf);
-					if(split!=null){
-						index.insertSorted(split, index.keys.size() );
-						if(index.isOverflowed()){
-							return splitIndexNode(index);
-						}
-						else{
-							return null;
-						}
-					}
-				}
-				else{
-					searchHelp(key, (Node) index.children.get(index.keys.size() -1));
-				}
-			}
-			//checks all other children to see where to input between
-			else{
-				for(int i=1; i< (index.children.size() -1); i++ ){
-					if(key.compareTo( (K) index.keys.get(i)) >= 0 && key.compareTo((K) index.keys.get(i+1))<0){						
-						Node<K, T> child = (Node) index.children.get(i);
-						if(child.isLeafNode){
-							LeafNode leaf = (LeafNode) child;
-							Entry<K, Node<K, T>> split= insertLeaf(key, value, leaf);
-							if(split!=null){
-								index.insertSorted(split, i);
-								if(index.isOverflowed()){
-									return splitIndexNode(index);
-								}
-								else{
-									return null;
-								}
-							}
-						}
-						else{
-							searchHelp(key, (Node) index.children.get(index.keys.size() -1));
-						}
-					}
-				}
-			}
-		}
-		//root is a leaf
-		else{
-			if(node.isLeafNode){
-				Entry<K, Node<K, T>> split=insertLeaf(key, value, (LeafNode) node);
-				if(split!=null){
-					root = new IndexNode<K,T>(split.getKey(), node, split.getValue());
-					return null;
-				}
-			}
-		}
-		return null;*/
-		
+		Entry<K, Node<K,T>> nchild=null;
 		if(!node.isLeafNode){
 			int ind=0;
 			IndexNode index= (IndexNode) node;
@@ -178,33 +98,37 @@ public class BPlusTree<K extends Comparable<K>, T> {
 					}
 				}			
 			}
-			Entry<K, Node<K,T>> nchild=insertHelp(key, value, child, null);
+			nchild=insertHelp(key, value, child, enter);
 			if(nchild==null){
 				return null;
 			}
 			else{
-				Entry<K,Node<K,T>> split=null;
-				index.insertSorted(nchild, ind);
-				if(index.isOverflowed()){
-					split = splitIndexNode(index);
+				if(node.keys.size()<D*2){
+					index.insertSorted(nchild, ind);
+					nchild=null;
+					return nchild;
+				}
+				else{
+					Entry<K,Node<K,T>> split = splitIndexNode(index);
+					nchild=split;
 					if(node==root){
 						IndexNode<K,T> nroot = new IndexNode<K,T>(split.getKey(), root, split.getValue());
 						root=nroot;
 						return null;
 					}
-					return split;
+					return nchild;
 				}
-				else{
-					return null;
-				}
-
 			}
 		}
 		else{
 			LeafNode<K,T> leaf = (LeafNode) node;
-			leaf.insertSorted(key, value);
-			if(leaf.isOverflowed()){
-				return splitLeafNode(leaf);
+			if(leaf.keys.size()<D*2){
+				leaf.insertSorted(key, value);
+			}
+			else{
+				leaf.insertSorted(key, value);
+				nchild = splitLeafNode(leaf);
+				return nchild;
 			}
 		}
 		return null;
@@ -270,11 +194,10 @@ public class BPlusTree<K extends Comparable<K>, T> {
 		for(int i=0; i<rKeys.size(); i++){
 			index.keys.remove(rKeys.get(i));
 		}
-		for(int i=0; i<childe.size(); i++){
+		for(int i=1; i<childe.size(); i++){
 			index.children.remove(childe.get(i));
 		}
 		K nkey = rKeys.get(0);
-		rKeys.remove(nkey);
 		IndexNode<K,T> right = new IndexNode<K, T>(rKeys, childe);
 		return (new SimpleEntry<K, Node<K,T>>(nkey, right) );
 		
