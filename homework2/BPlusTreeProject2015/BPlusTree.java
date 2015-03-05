@@ -40,7 +40,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 			else{
 				for(int i=1; i< (index.children.size() -1); i++ ){
 					if(key.compareTo( (K) index.keys.get(i)) >= 0 && key.compareTo((K) index.keys.get(i+1))<0. ){
-						searchHelp(key, (Node) index.children.get(i));
+						searchHelp(key, (Node) index.children.get(i+1));
 					}
 				}
 			}
