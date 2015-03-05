@@ -23,14 +23,15 @@ public class Tests {
 		String correct = 
 		    "@c/e/@%%[(a,a);(b,b);]#[(c,c);(d,d);]#[(e,e);(f,f);(g,g);]$%%";
 		
-		
+	
 		assertEquals(correct, test);
 
 		tree.delete('a');
 
 		test = Utils.outputTree(tree);
 		correct = "@e/@%%[(b,b);(c,c);(d,d);]#[(e,e);(f,f);(g,g);]$%%";
-    assertEquals(correct, test);
+		assertEquals(correct, test);
+
 
 	}
 
@@ -57,7 +58,7 @@ public class Tests {
 
   }
 	
-	
+
 	// testing proper leaf node merging behaviour
 	@Test
 	public void testDeleteLeafNodeMerge() {
@@ -78,7 +79,6 @@ public class Tests {
 		String result = "[(2,2);(3,3);(4,4);(5,5);]$%%";
 		assertEquals(result, test);
 	}
-	
 	
 	//Testing appropriate depth and node invariants on a big tree
   @Test
@@ -121,4 +121,6 @@ public class Tests {
     }
     return (1+maxDepth);
   }
+
 }
+

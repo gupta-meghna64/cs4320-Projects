@@ -19,6 +19,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	 * @return value
 	 */
 	public T searchHelp(K key, Node<K,T> node){
+
 		if(node.isLeafNode){
 			LeafNode leaf = (LeafNode) node;
 			if(leaf.keys.indexOf(key)!=-1){
@@ -87,21 +88,30 @@ public class BPlusTree<K extends Comparable<K>, T> {
 				child = (Node) index.children.get(0);
 			}
 			else if(key.compareTo((K) index.keys.get( index.keys.size() -1 )) >=0){
-				child = (Node) index.children.get(index.keys.size());
-				ind= index.keys.size()-1;
+				if(index.children.size()<=index.keys.size()){
+					child = (Node) index.children.get(index.children.size()-1);
+				}
+				else{
+					child = (Node) index.children.get(index.keys.size());
+				}
+				ind= index.keys.size();
 			}
 			else{
-				for(int i=1; i< (index.children.size() -1); i++ ){
+				for(int i=0; i< (index.children.size() -1); i++ ){
 					if(key.compareTo( (K) index.keys.get(i)) >= 0 && key.compareTo((K) index.keys.get(i+1))<0){						
 						child = (Node) index.children.get(i);
 						ind=i;
 					}
 				}			
 			}
+			if(child==null){
+				return null;
+			}
 			nchild=insertHelp(key, value, child, enter);
 			if(nchild==null){
 				return null;
 			}
+			
 			else{
 				if(node.keys.size()<D*2){
 					index.insertSorted(nchild, ind);
@@ -109,10 +119,15 @@ public class BPlusTree<K extends Comparable<K>, T> {
 					return nchild;
 				}
 				else{
+					index.insertSorted(nchild, ind);
 					Entry<K,Node<K,T>> split = splitIndexNode(index);
 					nchild=split;
 					if(node==root){
-						IndexNode<K,T> nroot = new IndexNode<K,T>(split.getKey(), root, split.getValue());
+						
+						IndexNode<K,T> s = (IndexNode )split.getValue();
+						s.keys.remove(0);
+						
+						IndexNode<K,T> nroot = new IndexNode<K,T>(split.getKey(), root, s);
 						root=nroot;
 						return null;
 					}
@@ -143,10 +158,21 @@ public class BPlusTree<K extends Comparable<K>, T> {
 		if(root==null){
 			root = new LeafNode<K,T>(key, value);
 		}
+		else if(root.isLeafNode){
+			LeafNode<K,T> leaf = (LeafNode) root;
+			if(leaf.keys.size()<D*2){
+				leaf.insertSorted(key, value);
+			}
+			else{
+				leaf.insertSorted(key, value);
+				Entry<K, Node<K,T>> nchild = splitLeafNode(leaf);
+				IndexNode<K,T> s = new IndexNode<K,T>(nchild.getKey(), leaf, nchild.getValue());
+				root=s;
+			}
+		}
 		else{
 			insertHelp(key, value, root, null);
 		}
-
 	}
 
 	/**
@@ -194,7 +220,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 		for(int i=0; i<rKeys.size(); i++){
 			index.keys.remove(rKeys.get(i));
 		}
-		for(int i=1; i<childe.size(); i++){
+		for(int i=0; i<childe.size(); i++){
 			index.children.remove(childe.get(i));
 		}
 		K nkey = rKeys.get(0);
