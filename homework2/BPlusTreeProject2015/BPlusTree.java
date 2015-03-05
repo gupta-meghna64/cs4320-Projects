@@ -225,6 +225,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	 * @return k key for recursive purposes, should return null to delete function
 	 */
 	public K deleteHelp( IndexNode<K,T> parent, Node<K,T> node, K key, K childKey){
+		//node is an indexNode
 		if(!node.isLeafNode){
 			K child=null;
 			IndexNode<K,T> index= (IndexNode) node;
@@ -255,6 +256,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 			}			
 			
 		}
+		//node is a leafNode
 		else{
 			LeafNode<K,T> leaf= (LeafNode) node;
 			int index= leaf.keys.indexOf(key);
@@ -286,6 +288,49 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	 */
 	public int handleLeafNodeUnderflow(LeafNode<K,T> left, LeafNode<K,T> right,
 			IndexNode<K,T> parent) {
+		//the smaller node(left) is on the left of the bigger node(right)
+		if(parent.children.indexOf(left)<parent.children.indexOf(right)){
+				//redistribution
+				if(right.keys.size()>D){
+					int index=parent.keys.indexOf(right.keys.get(0));
+					for(int i=0; i<right.keys.size(); i++){
+						left.insertSorted(right.keys.get(i), right.values.get(i));
+						right.keys.remove(i);
+						right.values.remove(i);
+						if(right.keys.size()==left.keys.size()){
+							break;
+						}
+					}
+					parent.keys.add(index, right.keys.get(0));
+					return -1;					
+				}
+				//merge
+				else{
+					
+				}
+		}
+		//the smaller node(left) is on the right of the bigger node(right)
+		else{
+			//redistribution
+			if(left.keys.size()>D){
+				int index=parent.keys.indexOf(right.keys.get(0));
+				for(int i=left.keys.size()-1; i>=0; i--){
+					right.insertSorted(left.keys.get(i), left.values.get(i));
+					left.keys.remove(i);
+					left.values.remove(i);
+					if(left.keys.size()==right.keys.size()){
+						break;
+					}
+				}
+				parent.keys.add(index, right.keys.get(0));
+				return -1;					
+			}
+			//merge
+			else{
+				
+			}
+			
+		}
 		return -1;
 
 	}
