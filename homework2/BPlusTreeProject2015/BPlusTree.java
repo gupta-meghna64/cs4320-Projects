@@ -85,13 +85,15 @@ public class BPlusTree<K extends Comparable<K>, T> {
 			IndexNode index= (IndexNode) node;
 			Node<K,T> child=null;
 			if(key.compareTo((K) index.keys.get(0))<0){
-				child = (Node) index.children.get(0);
+				if(index.children.size()>0){
+					child = (Node) index.children.get(0);
+				}
 			}
 			else if(key.compareTo((K) index.keys.get( index.keys.size() -1 )) >=0){
-				if(index.children.size()<=index.keys.size()){
+				if(index.children.size()<=index.keys.size() && index.children.size()>0){
 					child = (Node) index.children.get(index.children.size()-1);
 				}
-				else{
+				else if(index.children.size()>index.keys.size()) {
 					child = (Node) index.children.get(index.keys.size());
 				}
 				ind= index.keys.size();
