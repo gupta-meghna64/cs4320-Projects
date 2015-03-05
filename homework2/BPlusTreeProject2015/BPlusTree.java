@@ -252,7 +252,25 @@ public class BPlusTree<K extends Comparable<K>, T> {
 				}
 				else{
 					//handle underflow of indexNode
-					
+					int splitKey=-1;
+					int small = parent.children.indexOf(index);
+					//uses left node to merge/redib
+					if(small>0){
+						splitKey = handleIndexNodeUnderflow((IndexNode) parent.children.get(small), 
+									(IndexNode)parent.children.get(small-1), parent);
+					}
+					//uses right node to merge/redib
+					else{
+						splitKey = handleIndexNodeUnderflow((IndexNode) parent.children.get(small), 
+								(IndexNode)parent.children.get(small+1), parent);
+					}
+					if(splitKey==-1){
+						return null;
+					}
+					//merged and need to remove Node from parent
+					else{
+						return parent.keys.get(splitKey);
+					}
 				}
 			}			
 			
@@ -289,7 +307,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 				return null;
 			}
 		}
-		return null;
+
 	}
 	/**
 	 * TODO Delete a key/value pair from this B+Tree
@@ -305,9 +323,9 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	/**
 	 * TODO Handle LeafNode Underflow (merge or redistribution)
 	 * 
-	 * @param left
+	 * @param small
 	 *            : the smaller node
-	 * @param right
+	 * @param large
 	 *            : the bigger node
 	 * @param parent
 	 *            : their parent index node
@@ -375,9 +393,9 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	/**
 	 * TODO Handle IndexNode Underflow (merge or redistribution)
 	 * 
-	 * @param left
+	 * @param small
 	 *            : the smaller node
-	 * @param right
+	 * @param large
 	 *            : the bigger node
 	 * @param parent
 	 *            : their parent index node
@@ -389,7 +407,6 @@ public class BPlusTree<K extends Comparable<K>, T> {
 		int index=-1;
 		//merge
 		if(small.keys.size()+large.keys.size()<=2*D){			
-			index=parent.keys.indexOf(large.keys.get(0));
 			
 		}
 		//redistribute
