@@ -32,9 +32,9 @@ public class Tests {
 		correct = "@e/@%%[(b,b);(c,c);(d,d);]#[(e,e);(f,f);(g,g);]$%%";
 		assertEquals(correct, test);
 
-
 	}
 
+	
   // add some nodes, see if it comes out right, delete one, see if it's right
   @Test
   public void testHybrid2() {
@@ -79,7 +79,7 @@ public class Tests {
 		String result = "[(2,2);(3,3);(4,4);(5,5);]$%%";
 		assertEquals(result, test);
 	}
-	
+	/*
 	//Testing appropriate depth and node invariants on a big tree
   @Test
   public void testLargeTree() {
@@ -121,6 +121,6 @@ public class Tests {
     }
     return (1+maxDepth);
   }
-
+*/
 }
 

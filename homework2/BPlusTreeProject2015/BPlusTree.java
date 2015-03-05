@@ -19,7 +19,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	 * @return value
 	 */
 	public T searchHelp(K key, Node<K,T> node){
-
+		T found=null;
 		if(node.isLeafNode){
 			LeafNode leaf = (LeafNode) node;
 			if(leaf.keys.indexOf(key)!=-1){
@@ -32,20 +32,20 @@ public class BPlusTree<K extends Comparable<K>, T> {
 		else if(node.isLeafNode==false){
 			IndexNode index= (IndexNode) node;
 			if(key.compareTo((K) index.keys.get(0))<0){
-				searchHelp(key, (Node) index.children.get(0));
+				found = searchHelp(key, (Node) index.children.get(0));
 			}
 			else if(key.compareTo((K) index.keys.get( index.keys.size() -1 )) >=0){
-				searchHelp(key, (Node) index.children.get(index.keys.size() ));
+				found =searchHelp(key, (Node) index.children.get(index.keys.size() ));
 			}
 			else{
 				for(int i=1; i< (index.children.size() -1); i++ ){
 					if(key.compareTo( (K) index.keys.get(i)) >= 0 && key.compareTo((K) index.keys.get(i+1))<0. ){
-						searchHelp(key, (Node) index.children.get(i+1));
+						found =searchHelp(key, (Node) index.children.get(i+1));
 					}
 				}
 			}
 		}
-		return null;
+		return found;
 	}
 	
 	/**
@@ -247,11 +247,12 @@ public class BPlusTree<K extends Comparable<K>, T> {
 			}
 			else{
 				index.keys.remove(child);
-				if(!index.isUnderflowed()){
+				if(!index.isUnderflowed() || index==root){
 					return null;
 				}
 				else{
 					//handle underflow of indexNode
+					
 				}
 			}			
 			
@@ -260,6 +261,33 @@ public class BPlusTree<K extends Comparable<K>, T> {
 		else{
 			LeafNode<K,T> leaf= (LeafNode) node;
 			int index= leaf.keys.indexOf(key);
+			leaf.keys.remove(index);
+			leaf.values.remove(index);
+			//leaf is underflowed
+			if(leaf.isUnderflowed() && leaf!=root){
+				int splitKey=-1;
+				int small = parent.children.indexOf(leaf);
+				//uses left node to merge/redib
+				if(small>0){
+					splitKey = handleLeafNodeUnderflow((LeafNode) parent.children.get(small), 
+								(LeafNode)parent.children.get(small-1), parent);
+				}
+				//uses right node to merge/redib
+				else{
+					splitKey = handleLeafNodeUnderflow((LeafNode) parent.children.get(small), 
+							(LeafNode)parent.children.get(small+1), parent);
+				}
+				if(splitKey==-1){
+					return null;
+				}
+				//merged and need to remove Node from parent
+				else{
+					return parent.keys.get(splitKey);
+				}
+			}
+			else{
+				return null;
+			}
 		}
 		return null;
 	}
@@ -286,52 +314,62 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	 * @return the splitkey position in parent if merged so that parent can
 	 *         delete the splitkey later on. -1 otherwise
 	 */
-	public int handleLeafNodeUnderflow(LeafNode<K,T> left, LeafNode<K,T> right,
+	public int handleLeafNodeUnderflow(LeafNode<K,T> small, LeafNode<K,T> large,
 			IndexNode<K,T> parent) {
 		int index=-1;
 		//merge
-		if(left.keys.size()+right.keys.size()<=2*D){			
-			//left is on the left
-			if(parent.children.indexOf(left)<parent.children.indexOf(right)){
-				right.previousLeaf=left.previousLeaf;
+		if(small.keys.size()+large.keys.size()<=2*D){			
+			//small is on the left
+			if(parent.children.indexOf(small)<parent.children.indexOf(large)){
+				large.previousLeaf=small.previousLeaf;
 			}
-			//left is on the right 
+			//small is on the right 
 			else{
-				right.nextLeaf=left.nextLeaf;
+				large.nextLeaf=small.nextLeaf;
 			}
-			index=parent.keys.indexOf(right.keys.get(0));
-			for(int i=0; i<left.keys.size(); i++){
-				right.insertSorted(left.keys.get(i), right.values.get(i));
+			index=parent.keys.indexOf(large.keys.get(0));
+			for(int i=0; i<small.keys.size(); i++){
+				large.insertSorted(small.keys.get(i), small.values.get(i));
+				small.keys.remove(i);
+				small.values.remove(i);
+			}
+			parent.children.remove(small);
+			if(parent==root && parent.keys.size()==1 && parent.children.size()==1 
+					&& parent.children.get(0).isLeafNode){
+				root=parent.children.get(0);
+				return -1;
 			}
 			//returns the key to remove from parent
 			return index;
 		}
+		//redistribute
 		else{
-			//left is on the left
-			if(parent.children.indexOf(left)<parent.children.indexOf(right)){
-				index=parent.keys.indexOf(right.keys.get(0));
-				for(int i=0; i<right.keys.size(); i++){
-					left.insertSorted(right.keys.get(i), right.values.get(i));
-					right.keys.remove(i);
-					right.values.remove(i);
+			//small is on the left
+			if(parent.children.indexOf(small)<parent.children.indexOf(large)){
+				index=parent.keys.indexOf(large.keys.get(0));
+				for(int i=0; i<large.keys.size(); i++){
+					small.insertSorted(large.keys.get(i), large.values.get(i));
+					large.keys.remove(i);
+					large.values.remove(i);
 				}
 				//remove old split key and replace it
-				parent.keys.add(index, right.keys.get(0));
+				parent.keys.remove(index);
+				parent.keys.add(index, large.keys.get(0));
 				return -1;
 			}
-			//left is on the right
+			//small is on the right
 			else{
-				index=parent.keys.indexOf(left.keys.get(0));
-				for(int i=right.keys.size()-1; i>=0; i++){
-					left.insertSorted(right.keys.get(i), right.values.get(i));
-					right.keys.remove(i);
-					right.values.remove(i);
+				index=parent.keys.indexOf(small.keys.get(0));
+				for(int i=large.keys.size()-1; i>=0; i++){
+					small.insertSorted(large.keys.get(i), large.values.get(i));
+					large.keys.remove(i);
+					large.values.remove(i);
 				}
-				parent.keys.add(index, left.keys.get(0));
+				parent.keys.remove(index);
+				parent.keys.add(index, small.keys.get(0));
 				return -1;
 			}
 		}
-
 	}
 
 	/**
@@ -346,8 +384,18 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	 * @return the splitkey position in parent if merged so that parent can
 	 *         delete the splitkey later on. -1 otherwise
 	 */
-	public int handleIndexNodeUnderflow(IndexNode<K,T> leftIndex,
-			IndexNode<K,T> rightIndex, IndexNode<K,T> parent) {
+	public int handleIndexNodeUnderflow(IndexNode<K,T> small,
+			IndexNode<K,T> large, IndexNode<K,T> parent) {
+		int index=-1;
+		//merge
+		if(small.keys.size()+large.keys.size()<=2*D){			
+			index=parent.keys.indexOf(large.keys.get(0));
+			
+		}
+		//redistribute
+		else{
+			
+		}
 		return -1;
 	}
 }
