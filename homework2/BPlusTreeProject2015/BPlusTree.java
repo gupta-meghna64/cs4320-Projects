@@ -348,9 +348,9 @@ public class BPlusTree<K extends Comparable<K>, T> {
 			index=parent.keys.indexOf(large.keys.get(0));
 			for(int i=0; i<small.keys.size(); i++){
 				large.insertSorted(small.keys.get(i), small.values.get(i));
-				small.keys.remove(i);
-				small.values.remove(i);
 			}
+			small.keys.clear();
+			small.values.clear();
 			parent.children.remove(small);
 			if(parent==root && parent.keys.size()==1 && parent.children.size()==1 
 					&& parent.children.get(0).isLeafNode){
@@ -365,10 +365,16 @@ public class BPlusTree<K extends Comparable<K>, T> {
 			//small is on the left
 			if(parent.children.indexOf(small)<parent.children.indexOf(large)){
 				index=parent.keys.indexOf(large.keys.get(0));
-				for(int i=0; i<large.keys.size(); i++){
+				int i;
+				for(i=0; i<large.keys.size(); i++){
 					small.insertSorted(large.keys.get(i), large.values.get(i));
-					large.keys.remove(i);
-					large.values.remove(i);
+					if(small.keys.size()==large.keys.size()-i+1){
+						break;
+					}
+				}
+				for(int j=0; j<i+1; j++){
+					large.keys.remove(j);
+					large.values.remove(j);
 				}
 				//remove old split key and replace it
 				parent.keys.remove(index);
@@ -406,13 +412,64 @@ public class BPlusTree<K extends Comparable<K>, T> {
 			IndexNode<K,T> large, IndexNode<K,T> parent) {
 		int index=-1;
 		//merge
-		if(small.keys.size()+large.keys.size()<=2*D){			
+		if(small.keys.size()+large.keys.size()<=2*D){	
+			K split;
+			if(parent.children.indexOf(small)<parent.children.indexOf(large)){
+				split = parent.keys.get(parent.children.indexOf(small));
+				small.keys.add(split);
+				for(int i=0; i<large.keys.size(); i++){
+					small.keys.add(large.keys.get(i));
+					small.children.add(large.children.get(i));
+				}
+				large.keys.clear();
+				large.children.clear();
+				parent.children.remove(large);
+				return parent.keys.indexOf(split);
+				
+			}
+			else{
+				split = parent.keys.get(parent.children.indexOf(large));
+				large.keys.add(split);
+				for(int i=0; i<small.keys.size(); i++){
+					large.keys.add(small.keys.get(i));
+					large.children.add(small.children.get(i));
+				}
+				small.keys.clear();
+				small.children.clear();
+				parent.children.remove(small);
+				return parent.keys.indexOf(split);
+			}
 			
 		}
 		//redistribute
 		else{
-			
+			int par;
+			if(parent.children.indexOf(small)<parent.children.indexOf(large)){
+				par=parent.children.indexOf(small);
+				while(small.keys.size()!=large.keys.size()){
+					small.keys.add(parent.keys.get(par));
+					small.children.add(large.children.get(0));
+					parent.keys.remove(par);
+					parent.keys.add(par, large.keys.get(0));
+					large.keys.remove(0);
+					large.children.remove(0);
+				}
+				return -1;
+				
+			}
+			else{
+				par=parent.children.indexOf(large);
+				while(small.keys.size()!=large.keys.size()){
+					small.keys.add(parent.keys.get(par));
+					small.children.add(large.children.get(large.children.size()-1));
+					parent.keys.remove(par);
+					parent.keys.add(par, large.keys.get(large.keys.size()-1));
+					large.keys.remove(large.keys.size()-1);
+					large.children.remove(large.children.size()-1);
+				}
+				return -1;
+				
+			}
 		}
-		return -1;
 	}
 }
