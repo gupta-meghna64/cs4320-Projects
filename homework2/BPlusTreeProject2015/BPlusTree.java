@@ -318,6 +318,12 @@ public class BPlusTree<K extends Comparable<K>, T> {
 		if(search(key)!=null){
 			deleteHelp(null, root, key, null);
 		}
+		if(root.keys.size()==0 && !root.isLeafNode){
+			IndexNode<K,T> ind=(IndexNode) root;
+			if(ind.children.size()==1){
+				root= ind.children.get(0);	
+			}
+		}
 	}
 
 	/**
@@ -414,11 +420,14 @@ public class BPlusTree<K extends Comparable<K>, T> {
 		//merge
 		if(small.keys.size()+large.keys.size()<=2*D){	
 			K split;
+			//small is on the left
 			if(parent.children.indexOf(small)<parent.children.indexOf(large)){
 				split = parent.keys.get(parent.children.indexOf(small));
 				small.keys.add(split);
 				for(int i=0; i<large.keys.size(); i++){
 					small.keys.add(large.keys.get(i));
+				}
+				for(int i=0; i<large.children.size(); i++){
 					small.children.add(large.children.get(i));
 				}
 				large.keys.clear();
@@ -427,11 +436,14 @@ public class BPlusTree<K extends Comparable<K>, T> {
 				return parent.keys.indexOf(split);
 				
 			}
+			//small is on the right
 			else{
 				split = parent.keys.get(parent.children.indexOf(large));
 				large.keys.add(split);
 				for(int i=0; i<small.keys.size(); i++){
 					large.keys.add(small.keys.get(i));
+				}
+				for(int i=0; i<small.children.size(); i++){
 					large.children.add(small.children.get(i));
 				}
 				small.keys.clear();
@@ -444,6 +456,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 		//redistribute
 		else{
 			int par;
+			//small is on the left
 			if(parent.children.indexOf(small)<parent.children.indexOf(large)){
 				par=parent.children.indexOf(small);
 				while(small.keys.size()!=large.keys.size()){
@@ -457,6 +470,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 				return -1;
 				
 			}
+			//small is on the right
 			else{
 				par=parent.children.indexOf(large);
 				while(small.keys.size()!=large.keys.size()){
