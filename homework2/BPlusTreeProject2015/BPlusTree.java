@@ -288,7 +288,49 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	 */
 	public int handleLeafNodeUnderflow(LeafNode<K,T> left, LeafNode<K,T> right,
 			IndexNode<K,T> parent) {
-		return -1;
+		int index=-1;
+		//merge
+		if(left.keys.size()+right.keys.size()<=2*D){			
+			//left is on the left
+			if(parent.children.indexOf(left)<parent.children.indexOf(right)){
+				right.previousLeaf=left.previousLeaf;
+			}
+			//left is on the right 
+			else{
+				right.nextLeaf=left.nextLeaf;
+			}
+			index=parent.keys.indexOf(right.keys.get(0));
+			for(int i=0; i<left.keys.size(); i++){
+				right.insertSorted(left.keys.get(i), right.values.get(i));
+			}
+			//returns the key to remove from parent
+			return index;
+		}
+		else{
+			//left is on the left
+			if(parent.children.indexOf(left)<parent.children.indexOf(right)){
+				index=parent.keys.indexOf(right.keys.get(0));
+				for(int i=0; i<right.keys.size(); i++){
+					left.insertSorted(right.keys.get(i), right.values.get(i));
+					right.keys.remove(i);
+					right.values.remove(i);
+				}
+				//remove old split key and replace it
+				parent.keys.add(index, right.keys.get(0));
+				return -1;
+			}
+			//left is on the right
+			else{
+				index=parent.keys.indexOf(left.keys.get(0));
+				for(int i=right.keys.size()-1; i>=0; i++){
+					left.insertSorted(right.keys.get(i), right.values.get(i));
+					right.keys.remove(i);
+					right.values.remove(i);
+				}
+				parent.keys.add(index, left.keys.get(0));
+				return -1;
+			}
+		}
 
 	}
 
