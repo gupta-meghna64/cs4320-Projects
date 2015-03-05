@@ -59,20 +59,6 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	}
 
 	/**
-	 * Handles inserting leaves into the tree
-	 * @param key
-	 * @param value
-	 * @param leaf
-	 * @return
-	 */
-	public Entry<K, Node<K, T>> insertLeaf(K key, T value, LeafNode<K,T> leaf){
-		leaf.insertSorted(key, value);
-		if(leaf.isOverflowed()){
-			return splitLeafNode(leaf);
-		}
-		return null;
-	}
-	/**
 	 * Finds the right place to insert the key
 	 * @param key
 	 * @param value
@@ -230,14 +216,60 @@ public class BPlusTree<K extends Comparable<K>, T> {
 		return (new SimpleEntry<K, Node<K,T>>(nkey, right) );
 		
 	}
-
+	/**
+	 * A helper method to help delete based off the books pseudocode
+	 * @param parent
+	 * @param node
+	 * @param key
+	 * @param childKey
+	 * @return k key for recursive purposes, should return null to delete function
+	 */
+	public K deleteHelp( IndexNode<K,T> parent, Node<K,T> node, K key, K childKey){
+		if(!node.isLeafNode){
+			K child=null;
+			IndexNode<K,T> index= (IndexNode) node;
+			if(key.compareTo((K) index.keys.get(0))<0){
+				child=deleteHelp((IndexNode) node, (Node) index.children.get(0), key, null);
+			}
+			else if(key.compareTo((K) index.keys.get( index.keys.size() -1 )) >=0){
+				child=deleteHelp((IndexNode) node, (Node) index.children.get(index.keys.size()), key, null);
+			}
+			else{
+				for(int i=1; i< (index.children.size() -1); i++ ){
+					if(key.compareTo( (K) index.keys.get(i)) >= 0 && key.compareTo((K) index.keys.get(i+1))<0. ){
+						child=deleteHelp((IndexNode) node, (Node) index.children.get(i+1), key, null);
+					}
+				}
+			}
+			if(child==null){
+				return null;
+			}
+			else{
+				index.keys.remove(child);
+				if(!index.isUnderflowed()){
+					return null;
+				}
+				else{
+					//handle underflow of indexNode
+				}
+			}			
+			
+		}
+		else{
+			LeafNode<K,T> leaf= (LeafNode) node;
+			int index= leaf.keys.indexOf(key);
+		}
+		return null;
+	}
 	/**
 	 * TODO Delete a key/value pair from this B+Tree
 	 * 
 	 * @param key
 	 */
 	public void delete(K key) {
-
+		if(search(key)!=null){
+			deleteHelp(null, root, key, null);
+		}
 	}
 
 	/**
