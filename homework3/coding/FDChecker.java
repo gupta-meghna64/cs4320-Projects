@@ -49,10 +49,7 @@ public class FDChecker {
 		inter.retainAll(t2);
 		Iterator iter= fds.iterator();
 		while(iter.hasNext()){
-			FunctionalDependency curr = (FunctionalDependency) iter.next();
-			if((curr.left.equals(inter) && curr.right.equals(t1)) || (curr.left.equals(inter) && curr.right.equals(t2))){
-				flag=true;
-			}
+
 		}
 		return flag;
 	}
@@ -64,6 +61,7 @@ public class FDChecker {
 		Iterator iter= fds.iterator();
 		while(iter.hasNext()){
 			FunctionalDependency curr = (FunctionalDependency) iter.next();
+			System.out.println(curr.left);
 			if(closure.containsAll(curr.left)){
 				closure.add(curr.right);
 			}
