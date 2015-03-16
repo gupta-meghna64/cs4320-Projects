@@ -44,7 +44,17 @@ public class FDChecker {
 		//original table.
 		//a decomposition is lossless if the common attributes for a superkey for one of the
 		//tables.
-		return false;
+		boolean flag=false;
+		AttributeSet inter= t1;
+		inter.retainAll(t2);
+		Iterator iter= fds.iterator();
+		while(iter.hasNext()){
+			FunctionalDependency curr = (FunctionalDependency) iter.next();
+			if((curr.left.equals(inter) && curr.right.equals(t1)) || (curr.left.equals(inter) && curr.right.equals(t2))){
+				flag=true;
+			}
+		}
+		return flag;
 	}
 
 	//recommended helper method
