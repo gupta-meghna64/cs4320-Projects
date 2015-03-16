@@ -25,19 +25,56 @@ public class FDChecker {
 		//		t = closure(t) intersect table
 		//		result = result union t
 		//if b is contained in result, the dependency is preserved
-		boolean flag=false;
+		boolean flag[]=new boolean[fds.size()]; //array to keep track if each functional dependency passes
+		int cnt=0;
 		Iterator iter = fds.iterator();
 		while(iter.hasNext()){
 			FunctionalDependency curr = (FunctionalDependency) iter.next();
-			AttributeSet result=curr.left;
-			AttributeSet prev= new AttributeSet();
-			prev.addAll(result);
+			AttributeSet result= new AttributeSet();//result
+			result.addAll(curr.left);
 			Iterator resit = result.iterator();
+			
+			AttributeSet prev= new AttributeSet(); //previous result to check
+			prev.addAll(result);
+			
+		
+			AttributeSet union= new AttributeSet(); //union of t1 and t2 to go through entire thing
+			union.addAll(t1);
+			union.addAll(t2);
+			
 			while(resit.hasNext()){
+				Iterator unit = union.iterator();
+				while(unit.hasNext()){
+					AttributeSet temp= new AttributeSet();// initializes a temporary set to use
+					Attribute att = (Attribute) unit.next(); //current attribute of the union set
+					AttributeSet z= new AttributeSet(); //adds it to z by making it an attributeSet
+					z.add(att);
+					
+					temp.addAll(result);
+					temp.retainAll(z); //taking intersection of result and table
+					
+					AttributeSet t= closure(temp, fds); //taking attribute closure of table with the fds set
+					temp.clear(); //resets temp
+					
+					temp.addAll(t);
+					temp.retainAll(z); //taking intersection of the closure of temp with the table
+					result.addAll(temp); //union of result and the intersection of the closure of temp with table
+				}
 				
+				if(prev.equals(result)){
+					break; //will break if prev does not equal result
+				}
+				else{
+					prev.clear();
+					prev.addAll(result); //resets prev to equal the new result
+				}
 			}
+			if(result.contains(curr.right)){
+				flag[cnt]=true; //if b is contained in result its preserved and flag then is set to true
+			}
+			cnt++; 
 		}
-		return false;
+		return (!Arrays.asList(flag).contains(false)); //checks to see if false is located in the array, if so then false else true
 	}
 
 	/**
