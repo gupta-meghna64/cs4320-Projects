@@ -55,7 +55,7 @@ public class Test {
 		// fds
 		assertTrue(FDChecker.checkLossless(t1, t2, fds));
 	}
-	
+
 	@org.junit.Test
 	public void depPresFDtest() {
 		AttributeSet t1 = new AttributeSet();
@@ -117,4 +117,5 @@ public class Test {
 		// c -> d
 		assertTrue(FDChecker.checkLossless(t1, t2, fds));
 	}
+	
 }

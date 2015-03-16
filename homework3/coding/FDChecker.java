@@ -45,11 +45,13 @@ public class FDChecker {
 		//a decomposition is lossless if the common attributes for a superkey for one of the
 		//tables.
 		boolean flag=false;
-		AttributeSet inter= t1;
-		inter.retainAll(t2);
-		Iterator iter= fds.iterator();
-		while(iter.hasNext()){
 
+		AttributeSet inter= new AttributeSet();
+		inter.addAll(t1);
+		inter.retainAll(t2);
+		AttributeSet closure= closure(inter, fds);
+		if(closure.containsAll(t1) || closure.containsAll(t2)){
+			flag=true;
 		}
 		return flag;
 	}
@@ -61,7 +63,6 @@ public class FDChecker {
 		Iterator iter= fds.iterator();
 		while(iter.hasNext()){
 			FunctionalDependency curr = (FunctionalDependency) iter.next();
-			System.out.println(curr.left);
 			if(closure.containsAll(curr.left)){
 				closure.add(curr.right);
 			}
