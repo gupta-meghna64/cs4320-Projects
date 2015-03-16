@@ -25,6 +25,18 @@ public class FDChecker {
 		//		t = closure(t) intersect table
 		//		result = result union t
 		//if b is contained in result, the dependency is preserved
+		boolean flag=false;
+		Iterator iter = fds.iterator();
+		while(iter.hasNext()){
+			FunctionalDependency curr = (FunctionalDependency) iter.next();
+			AttributeSet result=curr.left;
+			AttributeSet prev= new AttributeSet();
+			prev.addAll(result);
+			Iterator resit = result.iterator();
+			while(resit.hasNext()){
+				
+			}
+		}
 		return false;
 	}
 
@@ -61,10 +73,18 @@ public class FDChecker {
 	private static AttributeSet closure(AttributeSet attrs, Set<FunctionalDependency> fds) {
 		AttributeSet closure= attrs;
 		Iterator iter= fds.iterator();
+		AttributeSet prev= new AttributeSet();
+		prev.addAll(closure);
 		while(iter.hasNext()){
 			FunctionalDependency curr = (FunctionalDependency) iter.next();
 			if(closure.containsAll(curr.left)){
 				closure.add(curr.right);
+			}
+			if(prev.equals(closure)){
+				break;
+			}
+			else{
+				prev.add(curr.right);
 			}
 		}
 		return closure;
