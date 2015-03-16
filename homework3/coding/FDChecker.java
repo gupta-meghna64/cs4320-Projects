@@ -32,7 +32,6 @@ public class FDChecker {
 			FunctionalDependency curr = (FunctionalDependency) iter.next();
 			AttributeSet result= new AttributeSet();//result
 			result.addAll(curr.left);
-			Iterator resit = result.iterator();
 			
 			AttributeSet prev= new AttributeSet(); //previous result to check
 			prev.addAll(result);
@@ -42,7 +41,7 @@ public class FDChecker {
 			union.addAll(t1);
 			union.addAll(t2);
 			
-			while(resit.hasNext()){
+			while(!prev.equals(result)){
 				Iterator unit = union.iterator();
 				while(unit.hasNext()){
 					AttributeSet temp= new AttributeSet();// initializes a temporary set to use
@@ -60,14 +59,9 @@ public class FDChecker {
 					temp.retainAll(z); //taking intersection of the closure of temp with the table
 					result.addAll(temp); //union of result and the intersection of the closure of temp with table
 				}
-				
-				if(prev.equals(result)){
-					break; //will break if prev does not equal result
-				}
-				else{
 					prev.clear();
 					prev.addAll(result); //resets prev to equal the new result
-				}
+
 			}
 			if(result.contains(curr.right)){
 				flag[cnt]=true; //if b is contained in result its preserved and flag then is set to true
