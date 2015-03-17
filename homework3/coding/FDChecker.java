@@ -25,50 +25,40 @@ public class FDChecker {
 		//		t = closure(t) intersect table
 		//		result = result union t
 		//if b is contained in result, the dependency is preserved
-		boolean flag[]=new boolean[fds.size()]; //array to keep track if each functional dependency passes
-		int cnt=0;
-		Iterator iter = fds.iterator();
+		Iterator<FunctionalDependency> iter = fds.iterator();
+		ArrayList<AttributeSet> tables = new ArrayList<AttributeSet>();
+		tables.add(t1);
+		tables.add(t2);
+		
 		while(iter.hasNext()){
-			FunctionalDependency curr = (FunctionalDependency) iter.next();
-			AttributeSet result= new AttributeSet();//result
-			result.addAll(curr.left);
+			FunctionalDependency curr = iter.next();
+			AttributeSet result= new AttributeSet(curr.left);//result				
 			
 			AttributeSet prev= new AttributeSet(); //previous result to check
-			prev.addAll(result);
-			
-		
-			AttributeSet union= new AttributeSet(); //union of t1 and t2 to go through entire thing
-			union.addAll(t1);
-			union.addAll(t2);
 			
 			while(!prev.equals(result)){
-				Iterator unit = union.iterator();
-				while(unit.hasNext()){
+				prev.addAll(result);
+				for(AttributeSet z: tables){
 					AttributeSet temp= new AttributeSet();// initializes a temporary set to use
-					Attribute att = (Attribute) unit.next(); //current attribute of the union set
-					AttributeSet z= new AttributeSet(); //adds it to z by making it an attributeSet
-					z.add(att);
 					
-					temp.addAll(result);
-					temp.retainAll(z); //taking intersection of result and table
+					AttributeSet t= closure(intersect(z, result), fds); //taking attribute closure of Z intersect Result
 					
-					AttributeSet t= closure(temp, fds); //taking attribute closure of table with the fds set
-					temp.clear(); //resets temp
-					
-					temp.addAll(t);
-					temp.retainAll(z); //taking intersection of the closure of temp with the table
-					result.addAll(temp); //union of result and the intersection of the closure of temp with table
+					temp.addAll(t); //adding attribute closure of Z interesect Result
+					result.addAll(intersect(temp, z)); //union of result and the intersection of the closure of temp with Z
 				}
-					prev.clear();
-					prev.addAll(result); //resets prev to equal the new result
 
 			}
-			if(result.contains(curr.right)){
-				flag[cnt]=true; //if b is contained in result its preserved and flag then is set to true
+			if(!result.contains(curr.right)){
+				return false; //if b is contained in result its preserved and flag then is set to true
 			}
-			cnt++; 
 		}
-		return (!Arrays.asList(flag).contains(false)); //checks to see if false is located in the array, if so then false else true
+		return true; //checks to see if false is located in the array, if so then false else true
+	}
+	
+	public static AttributeSet intersect(AttributeSet a, AttributeSet b){
+		AttributeSet in = new AttributeSet(a);
+		in.retainAll(b);
+		return in;
 	}
 
 	/**
@@ -89,9 +79,7 @@ public class FDChecker {
 		//tables.
 		boolean flag=false;
 
-		AttributeSet inter= new AttributeSet();
-		inter.addAll(t1);
-		inter.retainAll(t2);
+		AttributeSet inter= intersect(t1,t2);
 		AttributeSet closure= closure(inter, fds);
 		if(closure.containsAll(t1) || closure.containsAll(t2)){
 			flag=true;
@@ -102,20 +90,20 @@ public class FDChecker {
 	//recommended helper method
 	//finds the total set of attributes implied by attrs
 	private static AttributeSet closure(AttributeSet attrs, Set<FunctionalDependency> fds) {
-		AttributeSet closure= attrs;
-		Iterator iter= fds.iterator();
-		AttributeSet prev= new AttributeSet();
-		prev.addAll(closure);
-		while(iter.hasNext()){
-			FunctionalDependency curr = (FunctionalDependency) iter.next();
-			if(closure.containsAll(curr.left)){
-				closure.add(curr.right);
-			}
-			if(prev.equals(closure)){
-				break;
-			}
-			else{
-				prev.add(curr.right);
+		//closure=X
+		//repeat until there is no change:{
+		//if there is an FD U-> V in F such that U subset closure,
+		//	then set closure = closure union V }
+		AttributeSet closure= new AttributeSet(attrs); 		// set closure equal to X (attrs)
+		AttributeSet prev= new AttributeSet(); 		//prev to keep track of changes to closure
+		while(!prev.equals(closure)){ 				//repeat until no change
+			Iterator<FunctionalDependency> iter= fds.iterator(); 			// iterator to iterate through fds
+			prev.addAll(closure);
+			while(iter.hasNext()){					//goes through fds
+				FunctionalDependency curr = iter.next(); //currently used fd U->V
+				if(closure.containsAll(curr.left)){								// if U is in closure
+					closure.add(curr.right);									// closure union V
+				}
 			}
 		}
 		return closure;
