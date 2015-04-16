@@ -1,0 +1,90 @@
+mkdir classes; javac -classpath /usr/local/Cellar/hadoop/2.6.0/libexec/share/hadoop/common/*:/usr/local/Cellar/hadoop/2.6.0/libexec/share/hadoop/yarn/lib/*:/usr/local/Cellar/hadoop/2.6.0/libexec/share/hadoop/mapreduce/lib/*:/usr/local/Cellar/hadoop/2.6.0/libexec/share/hadoop/mapreduce/*:./  -d classes src/*.java; jar cvf PageRank.jar classes;echo classes/*.class; hadoop jar PageRank.jar PageRank
+src/LeftoverReducer.java:15: error: method write in interface TaskInputOutputContext<KEYIN,VALUEIN,KEYOUT,VALUEOUT> cannot be applied to given types;
+		context.write(nid, Ns);
+		       ^
+  required: IntWritable,Node
+  found: IntWritable,Iterable<Node>
+  reason: actual argument Iterable<Node> cannot be converted to Node by method invocation conversion
+  where KEYIN,VALUEIN,KEYOUT,VALUEOUT are type-variables:
+    KEYIN extends Object declared in interface TaskInputOutputContext
+    VALUEIN extends Object declared in interface TaskInputOutputContext
+    KEYOUT extends Object declared in interface TaskInputOutputContext
+    VALUEOUT extends Object declared in interface TaskInputOutputContext
+src/PageRank.java:47: error: incompatible types
+	    	leftover=had_counter.leftover_pr;
+	    	                    ^
+  required: long
+  found:    had_counter
+src/PageRank.java:48: error: incompatible types
+	    	size=had_counter.num_nodes;
+	    	                ^
+  required: long
+  found:    had_counter
+src/TrustMapper.java:18: error: method write in interface TaskInputOutputContext<KEYIN,VALUEIN,KEYOUT,VALUEOUT> cannot be applied to given types;
+    	context.write(key, value);
+    	       ^
+  required: IntWritable,NodeOrDouble
+  found: IntWritable,Node
+  reason: actual argument Node cannot be converted to NodeOrDouble by method invocation conversion
+  where KEYIN,VALUEIN,KEYOUT,VALUEOUT are type-variables:
+    KEYIN extends Object declared in interface TaskInputOutputContext
+    VALUEIN extends Object declared in interface TaskInputOutputContext
+    KEYOUT extends Object declared in interface TaskInputOutputContext
+    VALUEOUT extends Object declared in interface TaskInputOutputContext
+src/TrustMapper.java:20: error: method write in interface TaskInputOutputContext<KEYIN,VALUEIN,KEYOUT,VALUEOUT> cannot be applied to given types;
+    		context.write(i, value.getPageRank()/value.outgoingSize());
+    		       ^
+  required: IntWritable,NodeOrDouble
+  found: int,double
+  reason: actual argument int cannot be converted to IntWritable by method invocation conversion
+  where KEYIN,VALUEIN,KEYOUT,VALUEOUT are type-variables:
+    KEYIN extends Object declared in interface TaskInputOutputContext
+    VALUEIN extends Object declared in interface TaskInputOutputContext
+    KEYOUT extends Object declared in interface TaskInputOutputContext
+    VALUEOUT extends Object declared in interface TaskInputOutputContext
+src/TrustReducer.java:16: error: incompatible types
+		Double partial_pr=0;
+		                  ^
+  required: Double
+  found:    int
+src/TrustReducer.java:26: error: unexpected type
+				if(node.outgoingSize()=0){
+				                    ^
+  required: variable
+  found:    value
+src/TrustReducer.java:27: error: method increment in interface Counter cannot be applied to given types;
+					pr.increment(node.getPageRank()*100000);
+					  ^
+  required: long
+  found: double
+  reason: actual argument double cannot be converted to long by method invocation conversion
+src/TrustReducer.java:31: error: cannot find symbol
+		node.setPageRank(partial_pr);
+		^
+  symbol:   variable node
+  location: class TrustReducer
+src/TrustReducer.java:33: error: cannot find symbol
+		context.write(key, node);
+		                   ^
+  symbol:   variable node
+  location: class TrustReducer
+Note: src/PageRank.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+10 errors
+added manifest
+adding: classes/(in = 0) (out= 0)(stored 0%)
+adding: classes/LeftoverMapper.class(in = 1711) (out= 772)(deflated 54%)
+adding: classes/Node.class(in = 2745) (out= 1478)(deflated 46%)
+classes/LeftoverMapper.class classes/Node.class
+Exception in thread "main" java.lang.ClassNotFoundException: PageRank
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:366)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:355)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:354)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:423)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:356)
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:264)
+	at org.apache.hadoop.util.RunJar.run(RunJar.java:214)
+	at org.apache.hadoop.util.RunJar.main(RunJar.java:136)
+make: *** [default] Error 1

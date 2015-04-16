@@ -12,6 +12,12 @@ public class TrustMapper extends Mapper<IntWritable, Node, IntWritable, NodeOrDo
     public void map(IntWritable key, Node value, Context context) throws IOException, InterruptedException {
 
 	//Implement 
-	
-    }
+		//key is nodeid
+    	//value is node
+    	//emit the node
+    	context.write(key, new NodeOrDouble(value));
+    	for(int i: value.outgoing){
+    		context.write(new IntWritable(i), new NodeOrDouble(value.getPageRank()/value.outgoingSize()));
+    	}
+	}
 }

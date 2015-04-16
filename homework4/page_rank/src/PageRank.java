@@ -12,6 +12,11 @@ import org.apache.hadoop.util.*;
 
 public class PageRank {
 
+	public static enum had_counter{
+		num_nodes,
+		leftover_pr;
+	}
+
     public static void main(String[] args) throws IOException {
 	int numRepititions = 5;
 	long leftover = 0;
@@ -39,6 +44,11 @@ public class PageRank {
 	    }
 	    if(i%2 == 0) {
 		// Set up leftover and size
+	    	Counters counts = job.getCounters();
+	    	Counter left = counts.findCounter(had_counter.leftover_pr);
+	    	Counter s = counts.findCounter(had_counter.num_nodes);
+	    	leftover=left.getValue();
+	    	size=s.getValue();
 	    } else {
 		// Set up leftover and size
 	    }
